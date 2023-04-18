@@ -1,1 +1,1 @@
-# 0x00-pascal_triangle
+# ALX interview 
