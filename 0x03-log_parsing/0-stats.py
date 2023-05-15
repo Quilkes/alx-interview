@@ -1,63 +1,81 @@
 #!/usr/bin/python3
 
-"""Script that reads stdin line by line and computes metrics"""
+"""
+
+module contains a script that reads stdin line by line and computes metrics
+
+"""
 
 import sys
 
-def printsts(dic, size):
+status_codes = {
 
-    """ WWPrints information """
+    "200": 0,
 
-    print("File size: {:d}".format(size))
+    "301": 0,
 
-    for i in sorted(dic.keys()):
+    "400": 0,
 
-        if dic[i] != 0:
+    "401": 0,
 
-            print("{}: {:d}".format(i, dic[i]))
+    "403": 0,
 
-sts = {"200": 0, "301": 0, "400": 0, "401": 0, "403": 0,
+    "404": 0,
 
-       "404": 0, "405": 0, "500": 0}
+    "405": 0,
 
-count = 0
+    "500": 0
 
-size = 0
+}
 
-try:
+file_size = 0
 
-    for line in sys.stdin:
+def print_metrics():
 
-        if count != 0 and count % 10 == 0:
+    """prints of the logs"""
 
-            printsts(sts, size)
+    print("File size: {}".format(file_size))
 
-        stlist = line.split()
+    for status in sorted(status_codes.keys()):
 
-        count += 1
+        if status_codes[status]:
 
-        try:
+            print("{}: {}".format(status, status_codes[status]))
 
-            size += int(stlist[-1])
+if __name__ == "__main__":
 
-        except:
+    count = 0
 
-            pass
+    try:
 
-        try:
+        for line in sys.stdin:
 
-            if stlist[-2] in sts:
+            try:
 
-                sts[stlist[-2]] += 1
+                elems = line.split()
 
-        except:
+                file_size += int(elems[-1])
 
-            pass
+                if elems[-2] in status_codes:
 
-    printsts(sts, size)
+                    status_codes[elems[-2]] += 1
 
-except KeyboardInterrupt:
+            except Exception:
 
-    printsts(sts, size)
+                pass
 
-    raise
+            if count == 9:
+
+                print_metrics()
+
+                count = -1
+
+            count += 1
+
+    except KeyboardInterrupt:
+
+        print_metrics()
+
+        raise
+
+    print_metrics()
